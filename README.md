@@ -1,2 +1,3 @@
 # Akos's ESPHome world
-Some of my interesting project based on ESPHome
+
+Here you can find the config files for some of my interesting projects, made possible by ESPHome.
