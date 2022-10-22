@@ -129,7 +129,7 @@ i2c:
   scl: 1
   scan: true
   id: bus_a
-
+  
 sensor:
   - platform: bmp085
     i2c_id: bus_a
