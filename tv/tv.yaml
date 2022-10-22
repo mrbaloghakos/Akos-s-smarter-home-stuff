@@ -1,0 +1,154 @@
+esphome:
+  name: tv
+  platform: ESP8266
+  board: esp01_1m
+  on_boot:
+    priority: -10
+    then:
+      - light.toggle: nightlight
+      - delay: 1s
+      - light.toggle: nightlight
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "TV Admin Hotspot"
+    password: !secret tv_hotspot_password
+  fast_connect: true
+
+captive_portal:  
+
+ota:
+
+logger:
+
+mqtt:
+  broker: !secret mqtt_ip
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+  on_message:
+     - topic: automation/myhome
+       payload: tv
+       qos: 0
+       then:
+         - uart.write: [0xa1, 0xf1, 0x04, 0xfb, 0x08]
+     - topic: automation/myhome/speaker
+       payload: mute
+       qos: 0
+       then:
+         - logger.log: muting
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x07]
+     - topic: automation/myhome/speaker
+       payload: aux1
+       qos: 0
+       then:
+         - logger.log: input to AUX1
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x0F]
+     - topic: automation/myhome/speaker
+       payload: aux2
+       qos: 0
+       then:
+         - logger.log: input to AUX2
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x0E]
+     - topic: automation/myhome/speaker
+       payload: "5.1"
+       qos: 0
+       then:
+         - logger.log: input to 5.1
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x0D]
+     - topic: automation/myhome/speaker
+       payload: center+
+       qos: 0
+       then:
+         - logger.log: center+
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x14]
+     - topic: automation/myhome/speaker
+       payload: center-
+       qos: 0
+       then:
+         - logger.log: center-
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x1A]
+     - topic: automation/myhome/speaker
+       payload: bass-
+       qos: 0
+       then:
+         - logger.log: bass-
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x1B]
+     - topic: automation/myhome/speaker
+       payload: bass+
+       qos: 0
+       then:
+         - logger.log: bass+
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x15]
+     - topic: automation/myhome/speaker
+       payload: rear-
+       qos: 0
+       then:
+         - logger.log: rear-
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x19]
+     - topic: automation/myhome/speaker
+       payload: rear+
+       qos: 0
+       then:
+         - logger.log: rear+
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x13]
+     - topic: automation/myhome/speaker
+       payload: vol-
+       qos: 0
+       then:
+         - logger.log: vol-
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x2D]
+     - topic: automation/myhome/speaker
+       payload: vol+
+       qos: 0
+       then:
+         - logger.log: vol+
+         - uart.write: [0xa1, 0xf1, 0x00, 0xff, 0x2B]
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ESP IP Address
+    ssid:
+      name: ESP Connected SSID
+    bssid:
+      name: ESP Connected BSSID
+    mac_address:
+      name: ESP MAC
+  - platform: version
+    name: "ESPHome Version"
+
+uart:
+  tx_pin: 2
+  # rx_pin: 3
+  baud_rate: 9600
+
+i2c:
+  sda: 0
+  scl: 1
+  scan: true
+  id: bus_a
+
+sensor:
+  - platform: bmp085
+    i2c_id: bus_a
+    temperature:
+      name: "Bedroom Temperature"
+    update_interval: 60s
+
+switch:
+  - platform: restart
+    name: "Restart"
+
+output:
+  - platform: esp8266_pwm
+    pin: 3 
+    frequency: 1000 Hz
+    id: pwm_output
+
+light:
+  - platform: monochromatic
+    output: pwm_output
+    name: Nightlight
+    id: nightlight
