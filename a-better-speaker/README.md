@@ -9,7 +9,7 @@ This project is about giving your regular speaker system some features, to make 
 
 - Spotify playback thanks to [librespot](https://github.com/librespot-org/librespot)
 
-- Stream your Linux's audio in real time via [PulseAudio's tunnel-sink module](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Modules/#module-tunnel-sinksource)
+- Stream your Linux based computer's audio to the speaker in real time via [PulseAudio's tunnel-sink module](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Modules/#module-tunnel-sinksource)
 
 - Keep the speaker awake using [SoX](https://sox.sourceforge.net/)
 
@@ -109,4 +109,4 @@ When using PulseAudio's network streaming, you will have another playback device
    
    3. Run `pactl load-module module-tunnel-sink "server=192.168.1.2 sink_name=Big-Speaker"` after replacing the IP with the Pi's actual IP.
    4. Now go to your computer's sound settings, and select the newly added sink if it isn't selected already. It should be called something like `Tunnel to 192.168.1.2`
-Now every sound on your computer should be played on the newly added big speaker. You can control the volume by simply controlling your systems volume as you normally would with the sliders.
+Now every sound on your computer should be played on the newly added big speaker. You can control the volume by simply controlling your computer's volume as you normally would with the sliders.
