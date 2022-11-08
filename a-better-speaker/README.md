@@ -129,7 +129,7 @@ We will create a Systemd service that will connect to the Pi's PulseAudio sink o
        
        [Install]
        WantedBy=default.target
-       ```
+  ```
   3. Do `systemctl --user daemon-reload` then `systemctl --user enable connect-pulseaudio-to-pi.service`. 
       **Stop every audio playback on your computer!** Really. 
       Stop every video and music playback, because in the next step you will connect to the big speaker which might blast your audio on max volume the moment you press return.
