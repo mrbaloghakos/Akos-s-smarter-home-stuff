@@ -15,7 +15,12 @@ This project is about giving your regular speaker system some features, to make 
 
 - Play notification sounds on the speaker based on custom actions
 
-  
+## Contents:
+- [Hardware Requirements](https://github.com/mrbaloghakos/Akos-s-smarter-home-stuff/tree/main/a-better-speaker#hardware-requirements)
+- [Initial setup steps](https://github.com/mrbaloghakos/Akos-s-smarter-home-stuff/tree/main/a-better-speaker#initial-setup-steps)
+- [Setting up librespot (Spotify Connect client)](https://github.com/mrbaloghakos/Akos-s-smarter-home-stuff/tree/main/a-better-speaker#setting-up-librespot-spotify-connect-client)
+- [Setting up PulseAudio as network sink (Linux to Linux only)](https://github.com/mrbaloghakos/Akos-s-smarter-home-stuff/tree/main/a-better-speaker#setting-up-pulseaudio-as-network-sink)
+
 
 ## Hardware Requirements:
 
@@ -86,7 +91,7 @@ For this you will need a SpotifyPremium account.
       2. Reload, enable and start the new service: `systemctl --user daemon-reload && systemctl --user enable librespot && systemctl --user start librespot`
 
           At this point you should be able to connect to the speaker using the Spotify app. You should find the device as `Livingroom Big Speaker` 
-## Setting up PulseAudio as network sink
+## Setting up PulseAudio as network sink (Linux to Linux only)
 With this you will be able to stream your Linux based machine's audio to the speaker over the network. This is useful if you have sound source other than Spotify, that you would like to listen to on the speaker. You could also use Bluetooth if your speaker supports it, but then you would have to change source on the speaker, adding a few steps to the process. 
 When using PulseAudio's network streaming, you will have another playback device alongside your built in speakers, and you can simply switch between the built in speakers and the remote speaker in the settings. 
  ### On the Pi
