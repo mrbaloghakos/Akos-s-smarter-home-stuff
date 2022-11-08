@@ -13,7 +13,7 @@ This project is about giving your regular speaker system some features, to make 
 
 - Keep the speaker awake using [SoX](https://sox.sourceforge.net/)
 
-- Play notification sounds on the speaker based on custom actions
+- *Play notification sounds on the speaker based on custom actions (coming soon)*
 
 ## Contents:
 - [Hardware Requirements](https://github.com/mrbaloghakos/Akos-s-smarter-home-stuff/tree/main/a-better-speaker#hardware-requirements)
@@ -105,13 +105,34 @@ When using PulseAudio's network streaming, you will have another playback device
 
 2. Restart the Pi with `sudo reboot` 
  ### On your computer (or the computer that will stream to the Pi)
- We will create a cron job that will connect to the Pi's PulseAudio sink on boot.
-   1. Open your Crontab with `crontab -e` and create the following job: `@reboot sleep 5; pactl load-module module-tunnel-sink "server=192.168.1.2 sink_name=Big-Speaker"` 
-   Make sure to use the Pi's IP address.
-   
-   2. **Stop every audio playback on your computer!** Really. 
-   Stop every video and music playback, because in the next step you will connect to the big speaker which might blast your audio on max volume the moment you press return.
-   
-   3. Run `pactl load-module module-tunnel-sink "server=192.168.1.2 sink_name=Big-Speaker"` after replacing the IP with the Pi's actual IP.
-   4. Now go to your computer's sound settings, and select the newly added sink if it isn't selected already. It should be called something like `Tunnel to 192.168.1.2`
-Now every sound on your computer should be played on the newly added big speaker. You can control the volume by simply controlling your computer's volume as you normally would with the sliders.
+We will create a Systemd service that will connect to the Pi's PulseAudio sink on boot.
+1. Create a script that will connect your computer to the Pi, place it where you like it. I put mine in `/opt/connect-pulseaudio-to-pi.sh`.
+      Contents should be (don't forget to input your Pi's IP):
+      ```
+      #!/bin/sh
+      pactl list modules | grep module-tunnel-sink || pactl load-module module-tunnel-sink "server=192.168.1.2 sink_name=Big-Speaker"
+      ```
+      What it does is it checks if there is already a `module-tunnel-sink` loaded, and if so, then do nothing. If not, then load it. 
+      Don't forget to `sudo chmod +x /opt/connect-pulseaudio-to-pi.sh`
+
+2. Create a Systemd service called `connect-pulseaudio-to-pi` that will run the above script during every boot
+       Create the following file : `~/.config/systemd/user/connect-pulseaudio-to-pi.service` with the following contents:
+      ```
+       [Unit]
+       Description=Stream local audio to the Pi's Pulseaudio receiver
+       After= network.target sound.target
+       
+       [Service]
+       Type=oneshot
+       ExecStart=/opt/connect-pulseaudio-to-pi.sh
+       RemainAfterExit=yes
+       
+       [Install]
+       WantedBy=default.target
+       ```
+  3. Do `systemctl --user daemon-reload` then `systemctl --user enable connect-pulseaudio-to-pi.service`. 
+      **Stop every audio playback on your computer!** Really. 
+      Stop every video and music playback, because in the next step you will connect to the big speaker which might blast your audio on max volume the moment you press return.
+      Now start the service manually to connect to the Pi: `systemctl --user start connect-pulseaudio-to-pi.service`. 
+      Now go to your computer's sound settings, and select the newly added sink if it isn't selected already. It should be called something like `Tunnel to 192.168.1.2`
+      Now every sound on your computer should be played on the newly added big speaker. You can control the volume by simply controlling your computer's volume as you normally would with the sliders.
